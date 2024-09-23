@@ -6,6 +6,7 @@
 
 #importamos todo lo necesario para que funcione el backend
 from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from models import mongo, init_db
 from config import Config
