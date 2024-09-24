@@ -117,6 +117,36 @@ def addCars():
     else:
         return jsonify({'message': 'Error al procesar la solicitud'}), 400
     
+# Endpoint para agregar un objetivo
+@app.route('/addGoal', methods=['POST'])
+@jwt_required()
+def addGoal():
+    # Obtener el ID del usuario desde el JWT
+    user_id = get_jwt_identity()
+    user_id = ObjectId(user_id)
+    
+    data = request.get_json()
+    title = data.get('title')
+    description = data.get('description')
+    what_to_do = data.get('what_to_do')
+    how_much_to_do = data.get('how_much_to_do')
+    check_date = data.get('check_date')
+
+    result = mongo.db.goals.insert_one({
+        "user_id": user_id,
+        "title": title,
+        "description": description,
+        "what_to_do": what_to_do,
+        "how_much_to_do": how_much_to_do,
+        "check_date": check_date
+    })
+    
+    if result.acknowledged:
+        return jsonify({"msg": "Objetivo agregado correctamente"}), 201
+    else:
+        return jsonify({"msg": "Hubo un error, no se pudo agregar el objetivo"}), 400
+
+
 #Encontrar los carros del usuario logeado
 @app.route('/getUserCars', methods=['GET'])
 @jwt_required()
@@ -137,6 +167,52 @@ def getCars():
         return jsonify({'message': 'Carro encontrado', 'car': cars}), 200
     else:
         return jsonify({'message': 'Carro no encontrado'}), 404
+
+# Encontrar los objetivos del usuario logeado
+@app.route('/getUserGoals', methods=['GET'])
+@jwt_required()
+def getUserGoals():
+    # Obtener el ID del usuario desde el JWT
+    user_id = get_jwt_identity()
+    user_id = ObjectId(user_id)
+
+    # Buscar en la base de datos usando el ID del usuario
+    goals = mongo.db.goals.find({'user_id': user_id})
+
+    goal_list = []
+    for goal in goals:
+        goal['_id'] = str(goal['_id'])
+        goal['user_id'] = str(goal['user_id'])
+        goal_list.append(goal)
+
+    if goal_list:
+        return jsonify({'message': 'Objetivos encontrados', 'goals': goal_list}), 200
+    else:
+        return jsonify({'message': 'Objetivos no encontrados'}), 404
+
+# Endpoint para eliminar un objetivo del usuario
+@app.route('/deleteUserGoal', methods=['DELETE'])
+def deleteUserGoal():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    title = data.get('title')
+
+    # Buscar al usuario por username
+    user = mongo.db.users.find_one({"username": username})
+
+    if user and bcrypt.check_password_hash(user['password'], password):
+        # Eliminar el objetivo del usuario
+        result = mongo.db.goals.delete_one({"user_id": user['_id'], "title": title})
+        
+        if result.deleted_count > 0:
+            return jsonify({"msg": "Objetivo eliminado correctamente"}), 200
+        else:
+            return jsonify({"msg": "Objetivo no encontrado"}), 404
+    else:
+        return jsonify({"msg": "Credenciales incorrectas"}), 401
+
+
 
 #comentario
 
