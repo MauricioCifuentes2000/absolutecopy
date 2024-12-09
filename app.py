@@ -1,9 +1,3 @@
-### Backend usando Pyhton Flask y MongoDB con JWT y Bcrypt ###
-### Universidad Anahuac Mayab
-### 31-08-2024, Fabricio Suárez
-### Prog de Dispositivos Móviles
-
-
 #importamos todo lo necesario para que funcione el backend
 from flask import Flask, request, jsonify
 from flask import Flask, request, jsonify
@@ -98,28 +92,6 @@ def ruta_protegida():
     else:
         return jsonify({'message': 'Usuario no encontrado'}), 404
     
-########################################################    
-#Endpoint para crear cars
-#@app.route('/addCars', methods=['POST'])
-#@jwt_required()
-#def addCars():
-    # Obtener el ID del usuario desde el JWT
-#    user_id = get_jwt_identity()
-
-    #El user_id que esta como str hay que convertirlo a ObjectId 
-#    user_id = ObjectId(user_id)
-
-#    car_data = request.get_json()
-#    car_data['user_id'] = user_id
-
-#    result = mongo.db.cars.insert_one(car_data)
-#    if result.acknowledged:
-#        return jsonify({'message': 'Coche añadido', 'car_id': str(result.inserted_id)}), 201
-#    else:
-#        return jsonify({'message': 'Error al procesar la solicitud'}), 400
-#########################################
-
-
 # Endpoint para agregar un objetivo
 @app.route('/addGoal', methods=['POST'])
 @jwt_required()
@@ -148,31 +120,6 @@ def addGoal():
         return jsonify({"msg": "Objetivo agregado correctamente"}), 201
     else:
         return jsonify({"msg": "Hubo un error, no se pudo agregar el objetivo"}), 400
-
-
-#Encontrar los carros del usuario logeado
-#############################################
-#@app.route('/getUserCars', methods=['GET'])
-#@jwt_required()
-#def getCars():
-    # Obtener el ID del usuario desde el JWT
-#    user_id = get_jwt_identity()
-
-    #El user_id que esta como str hay que convertirlo a ObjectId para poder hacer la busqueda
-#    user_id = ObjectId(user_id)
-
-    # Buscar en la base de datos usando el ID del usuario
-#    cars = mongo.db.cars.find_one({'user_id': user_id})
-
-#    if cars:
-        #Como _id es un objectid hay que volverlo str para poderlo mandar a un json
-#        cars['_id'] = str(cars['_id'])
-#        cars['user_id'] =str(cars['user_id'])
-#        return jsonify({'message': 'Carro encontrado', 'car': cars}), 200
-#    else:
-#        return jsonify({'message': 'Carro no encontrado'}), 404
-###########################
-
 
 # Encontrar los objetivos del usuario logeado
 @app.route('/getUserGoals', methods=['GET'])
@@ -218,19 +165,5 @@ def deleteUserGoal():
     else:
         return jsonify({"msg": "Credenciales incorrectas"}), 401
 
-
-
-#comentario
-
-
-# En Python, cada archivo tiene una variable especial llamada __name__.
-# Si el archivo se está ejecutando directamente (no importado como un módulo en otro archivo), 
-# __name__ se establece en '__main__'.
-# Esta condición verifica si el archivo actual es el archivo principal que se está ejecutando. 
-# Si es así, ejecuta el bloque de código dentro de la condición.
-# app.run() inicia el servidor web de Flask.
-# El argumento debug=True  inicia el servidor web de desarrollo de Flask con el modo de 
-# depuración activado, # lo que permite ver errores detallados y reiniciar automáticamente
-# el servidor cuando se realizan cambios en el código. (SERIA COMO EL NODEMON)
 if __name__ == '__main__':
     app.run(debug=True)
